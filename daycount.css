@@ -1,0 +1,186 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: cursive;
+  background-color: #000000;
+  color: #000;
+}
+h1 {
+  background-color: aquamarine;
+  border: 6px solid hsl(353, 95%, 48%);
+  border-radius: 25px;
+  text-align: center;
+  width: 45%;
+  margin: 8px auto;
+  padding: 10px;
+  font-size: 3rem;
+}
+h2 {
+  background-color: aquamarine;
+  border: 6px solid hsl(353, 95%, 48%);
+  border-radius: 20px;
+  text-align: center;
+  width: 34%;
+  margin: 20px auto;
+  padding: 10px;
+}
+.water-group h2,
+.weight-group h2 {
+  width: 70%;
+  min-width: 120px;
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: auto;
+}
+ol {
+  border: 6px solid hsl(353, 95%, 48%);
+  border-radius: 20px;
+  font-size: 20px;
+  margin: 6px auto;
+  width: 50%;
+  background-color: aqua;
+  list-style-type: decimal;
+  list-style-position: inside; /* optional: numbers align with text */
+  padding-left: 0; /* optional: removes default indent */
+  text-align: center; /* optional: centers text and numbers */
+}
+
+ol li {
+  text-align: center;
+
+  padding: 11px;
+}
+
+ol li::marker {
+  content: "DAY " counter(list-item) ":- ";
+  text-decoration: underline;
+}
+
+/* --- Stylish pop-up forms for Add/Clear/Weight actions --- */
+#add-form,
+#clear-form,
+#add-weight-form,
+#clear-weight-form {
+  background: #000 !important;
+  color: #fff;
+  border-radius: 1em;
+  box-shadow: none !important;
+  padding: 1.5em 1.2em 1.2em 1.2em;
+  margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 220px;
+  max-width: 320px;
+  border: 2px solid #000 !important;
+  gap: 1em;
+}
+#add-form input,
+#clear-form input,
+#add-weight-form input,
+#clear-weight-form input {
+  background: #222;
+  color: #fff;
+  font-size: 1.1em;
+  padding: 0.7em 1em;
+  border-radius: 0.5em;
+  border: 1.5px solid #1976d2;
+  margin-bottom: 0.5em;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+#add-form input:focus,
+#clear-form input:focus,
+#add-weight-form input:focus,
+#clear-weight-form input:focus {
+  background: #111;
+  color: #fff;
+  border: 2px solid #125ea2;
+  box-shadow: 0 0 0 2px #1976d2aa;
+}
+#add-form button[type="submit"],
+#clear-form button[type="submit"],
+#add-weight-form button[type="submit"],
+#clear-weight-form button[type="submit"] {
+  font-size: 1.1em;
+  padding: 0.7em 1em;
+  border-radius: 0.5em;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background 0.2s;
+  margin-top: 0.5em;
+}
+#add-form button[type="submit"]:hover,
+#clear-form button[type="submit"]:hover,
+#add-weight-form button[type="submit"]:hover,
+#clear-weight-form button[type="submit"]:hover {
+  background: #125ea2;
+}
+.water-group > button,
+.weight-group > button {
+  width: 48%;
+  margin: 0.5em 1%;
+  display: inline-block;
+}
+.water-group > form,
+.weight-group > form {
+  width: 100%;
+  margin: 0.5em 0;
+}
+.water-group .button-row,
+.weight-group .button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1em;
+  width: 100%;
+}
+#preview-graph-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 1.5em auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+#preview-weight-graph {
+  width: 500px;
+  height: 180px;
+  display: block;
+  margin: 0 auto 0.5em auto;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.1);
+  border-radius: 1em;
+  background: #000;
+}
+#show-graph-btn {
+  display: block;
+  margin: 2em auto 0 auto;
+  padding: 0.9em 2.5em;
+  font-size: 1.25em;
+  font-family: inherit;
+  background: linear-gradient(90deg, #1976d2 60%, #00bcd4 100%);
+  color: #fff;
+  border: none;
+  border-radius: 1.2em;
+  box-shadow: 0 4px 18px rgba(25, 118, 210, 0.13);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 0.03em;
+  font-weight: bold;
+  margin-top: 1.2em;
+  margin-bottom: 0;
+}
+#show-graph-btn:hover,
+#show-graph-btn:focus {
+  background: linear-gradient(90deg, #125ea2 60%, #0097a7 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 24px rgba(25, 118, 210, 0.18);
+  outline: none;
+}
