@@ -10,7 +10,7 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Firebase script.js as module -->
+    <!-- Firebase + site logic -->
     <script type="module" src="script.js"></script>
   </head>
   <body>
@@ -19,31 +19,36 @@
 
     <ol></ol>
 
-    <div id="add-container" style="text-align: right; margin-top: 1em">
-      <!-- All forms already exist and are wired via script.js -->
-      <button id="add-btn" type="button">Add</button>
-      <form id="add-form" style="display: none; margin-top: 1em" autocomplete="off">
+    <div class="water-group">
+      <h2>Water Intake</h2>
+      <div class="button-row">
+        <button id="add-btn" type="button">Add</button>
+        <button id="clear-btn" type="button">Clear</button>
+      </div>
+      <form id="add-form" style="display: none;" autocomplete="off">
         <input type="number" id="day-input" placeholder="Day number" list="day-suggestions" min="1" required />
         <datalist id="day-suggestions"></datalist>
-        <input type="text" id="water-input" placeholder="Water drink" required />
+        <input type="text" id="water-input" placeholder="Water amount (e.g. 2)" required />
         <button type="submit">Submit</button>
       </form>
-
-      <button id="clear-btn" type="button">Clear</button>
-      <form id="clear-form" style="display: none; margin-top: 1em" autocomplete="off">
+      <form id="clear-form" style="display: none;" autocomplete="off">
         <input type="number" id="clear-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
         <button type="submit">Submit</button>
       </form>
+    </div>
 
-      <button id="add-weight-btn" type="button">Add Weight</button>
-      <form id="add-weight-form" style="display: none; margin-top: 1em" autocomplete="off">
+    <div class="weight-group">
+      <h2>Weight</h2>
+      <div class="button-row">
+        <button id="add-weight-btn" type="button">Add</button>
+        <button id="clear-weight-btn" type="button">Clear</button>
+      </div>
+      <form id="add-weight-form" style="display: none;" autocomplete="off">
         <input type="number" id="add-weight-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
         <input type="text" id="add-weight-input" placeholder="Weight (e.g. 70kg)" required />
         <button type="submit">Submit</button>
       </form>
-
-      <button id="clear-weight-btn" type="button">Clear Weight</button>
-      <form id="clear-weight-form" style="display: none; margin-top: 1em" autocomplete="off">
+      <form id="clear-weight-form" style="display: none;" autocomplete="off">
         <input type="number" id="clear-weight-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
         <button type="submit">Submit</button>
       </form>
