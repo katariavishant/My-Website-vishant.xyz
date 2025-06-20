@@ -3,67 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Day Count</title>
-    <link rel="stylesheet" href="daycount.css" />
-    <link rel="icon" href="dailycalculator.png" type="image/x-icon" />
-
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <!-- Firebase + site logic -->
-    <script type="module" src="script.js"></script>
+    <title>day count</title>
+    <link rel="stylesheet" href="css/daycount.css" />
+    <link rel="icon" href="image/dailycalculator.png" type="image/x-icon" />
   </head>
   <body>
-    <h1>Day Count Calculator</h1>
-    <h2>Starts from 19 June 2025</h2>
-
-    <ol></ol>
-
-    <div class="water-group">
-      <h2>Water Intake</h2>
-      <div class="button-row">
-        <button id="add-btn" type="button">Add</button>
-        <button id="clear-btn" type="button">Clear</button>
-      </div>
-      <form id="add-form" style="display: none;" autocomplete="off">
-        <input type="number" id="day-input" placeholder="Day number" list="day-suggestions" min="1" required />
+    <h1>Day Count Calculator<br /></h1>
+    <h2>starts from 19 june 2025</h2>
+    <ol>
+      <li>3</li>
+    </ol>
+    <div id="add-container" style="text-align: right; margin-top: 1em">
+      <button id="add-btn" type="button">Add</button>
+      <form
+        id="add-form"
+        style="display: none; margin-top: 1em"
+        autocomplete="off">
+        <input
+          type="number"
+          id="day-input"
+          placeholder="Type day number (e.g. 3)"
+          list="day-suggestions"
+          min="1"
+          required
+          autocomplete="off" />
         <datalist id="day-suggestions"></datalist>
-        <input type="text" id="water-input" placeholder="Water amount (e.g. 2)" required />
+        <input
+          type="text"
+          id="water-input"
+          placeholder="Add water drink"
+          required
+          autocomplete="off" />
         <button type="submit">Submit</button>
       </form>
-      <form id="clear-form" style="display: none;" autocomplete="off">
-        <input type="number" id="clear-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
+      <button id="clear-btn" type="button">Clear</button>
+      <form
+        id="clear-form"
+        style="display: none; margin-top: 1em"
+        autocomplete="off">
+        <input
+          type="number"
+          id="clear-day-input"
+          placeholder="Type day number (e.g. 3)"
+          list="day-suggestions"
+          min="1"
+          required
+          autocomplete="off" />
+        <button type="submit">Submit</button>
+      </form>
+      <button id="add-weight-btn" type="button">Add Weight</button>
+      <form
+        id="add-weight-form"
+        style="display: none; margin-top: 1em"
+        autocomplete="off">
+        <input
+          type="number"
+          id="add-weight-day-input"
+          placeholder="Type day number (e.g. 3)"
+          list="day-suggestions"
+          min="1"
+          required
+          autocomplete="off" />
+        <input
+          type="text"
+          id="add-weight-input"
+          placeholder="Add weight (e.g. 70kg)"
+          required
+          autocomplete="off" />
         <button type="submit">Submit</button>
       </form>
     </div>
-
-    <div class="weight-group">
-      <h2>Weight</h2>
-      <div class="button-row">
-        <button id="add-weight-btn" type="button">Add</button>
-        <button id="clear-weight-btn" type="button">Clear</button>
-      </div>
-      <form id="add-weight-form" style="display: none;" autocomplete="off">
-        <input type="number" id="add-weight-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
-        <input type="text" id="add-weight-input" placeholder="Weight (e.g. 70kg)" required />
-        <button type="submit">Submit</button>
-      </form>
-      <form id="clear-weight-form" style="display: none;" autocomplete="off">
-        <input type="number" id="clear-weight-day-input" placeholder="Day number" list="day-suggestions" min="1" required />
-        <button type="submit">Submit</button>
-      </form>
-    </div>
-
-    <!-- Preview Graph Section -->
-    <div id="preview-graph-container">
-      <canvas id="preview-weight-graph" width="500" height="200"></canvas>
-      <button id="show-graph-btn">Show Full Graph</button>
-    </div>
-
-    <!-- Fullscreen Graph Overlay -->
-    <div id="graph-container" style="display: none;">
-      <button id="close-graph-btn" style="position:absolute;top:10px;right:10px;font-size:2em;">×</button>
-      <canvas id="weight-graph" style="width:100vw;height:100vh;"></canvas>
-    </div>
+    <script src="script.js"></script>
   </body>
 </html>
