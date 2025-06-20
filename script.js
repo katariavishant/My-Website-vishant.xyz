@@ -1,8 +1,6 @@
-// ✅ Full Firebase-integrated script.js
-// 🔄 Replaces localStorage with Firebase Firestore
-// ✅ Keeps all UI, forms, Chart.js, layout, and styles intact
+// ✅ Full Firebase-integrated script.js with Chart.js support
+// 🔄 Syncs data with Firestore and restores preview/full graph features
 
-// --- Firebase Setup ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
@@ -13,7 +11,6 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🔧 Fill in your Firebase config here:
 const firebaseConfig = {
   apiKey: "AIzaSyCmp8FuNsCIvJNq1AEYP0GoG9zQhHwVwIY",
   authDomain: "daycount-b1ab6.firebaseapp.com",
@@ -27,7 +24,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const entriesCollection = collection(db, "entries");
 
-// --- Firebase Helpers ---
 async function fetchAllEntries() {
   const snapshot = await getDocs(entriesCollection);
   const map = {};
@@ -50,7 +46,6 @@ async function saveToFirebase(dateStr, drink, weight) {
   await setDoc(docRef, existing);
 }
 
-// --- Replace LocalStorage with Firebase on Load ---
 let entries = [];
 
 function getDateFromDay(dayNum) {
@@ -99,7 +94,6 @@ function loadAndRender() {
   });
 }
 
-// --- Replace LocalStorage Save with Firebase ---
 function handleAddWater(day, drink) {
   const dateStr = formatDate(getDateFromDay(day));
   saveToFirebase(dateStr, drink, null).then(loadAndRender);
@@ -122,7 +116,6 @@ function handleClearWeight(day) {
   setDoc(docRef, { date: dateStr, drinks: entries.find(e => e.date === dateStr)?.drinks || [], weights: [] }).then(loadAndRender);
 }
 
-// --- Form Event Listeners ---
 document.getElementById("add-form").onsubmit = function (e) {
   e.preventDefault();
   const day = document.getElementById("day-input").value.trim();
@@ -153,10 +146,74 @@ document.getElementById("clear-weight-form").onsubmit = function (e) {
   e.target.reset();
 };
 
-// --- Call Day Suggestions + Initial Load ---
 updateDaySuggestions();
 loadAndRender();
 
-// --- Keep All Chart.js Functions Unchanged ---
-// (renderPreviewGraph, renderWeightGraph, button controls, layout, etc. stay exactly as you wrote them)
-// Just make sure they use the 'entries' array, which is now fetched from Firebase.
+// --- Chart.js: Preview Graph ---
+function renderPreviewGraph() {
+  const ctx = document.getElementById("preview-weight-graph")?.getContext("2d");
+  if (!ctx) return;
+  const data = entries.filter(e => e.weights?.length).map(e => ({
+    x: new Date(e.date),
+    y: parseFloat(e.weights[e.weights.length - 1]) || 0
+  }));
+  if (window.previewChart) window.previewChart.destroy();
+  window.previewChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      datasets: [{
+        label: "Weight (kg)",
+        data: data,
+        borderColor: "#00bcd4",
+        backgroundColor: "rgba(0,188,212,0.1)",
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { type: "time", time: { unit: "day" }, title: { display: true, text: "Date" } },
+        y: { title: { display: true, text: "Weight (kg)" } }
+      }
+    }
+  });
+}
+
+document.getElementById("show-graph-btn").onclick = function () {
+  document.getElementById("graph-container").style.display = "block";
+  renderWeightGraph();
+};
+
+document.getElementById("close-graph-btn").onclick = function () {
+  document.getElementById("graph-container").style.display = "none";
+};
+
+function renderWeightGraph() {
+  const ctx = document.getElementById("weight-graph")?.getContext("2d");
+  const data = entries.filter(e => e.weights?.length).map(e => ({
+    x: new Date(e.date),
+    y: parseFloat(e.weights[e.weights.length - 1]) || 0
+  }));
+  if (window.fullChart) window.fullChart.destroy();
+  window.fullChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      datasets: [{
+        label: "Weight (kg)",
+        data: data,
+        borderColor: "#1976d2",
+        backgroundColor: "rgba(25,118,210,0.1)",
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { type: "time", time: { unit: "day" }, title: { display: true, text: "Date" } },
+        y: { title: { display: true, text: "Weight (kg)" } }
+      }
+    }
+  });
+}
