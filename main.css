@@ -45,3 +45,9 @@ caption {
   background: #333;
   color: rgb(218, 232, 130);
 }
+@media (max-width: 600px) {
+  body {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
