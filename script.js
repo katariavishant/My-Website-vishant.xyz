@@ -1,5 +1,17 @@
 // script.js
 
+// --- Firebase Initialization ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCmp8FuNsCIvJNq1AEYP0GoG9zQhHwVwIY",
+  authDomain: "daycount-b1ab6.firebaseapp.com",
+  projectId: "daycount-b1ab6",
+  storageBucket: "daycount-b1ab6.firebasestorage.app",
+  messagingSenderId: "100512162709",
+  appId: "1:100512162709:web:2016c57f96bfaafbec8c9c",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 // --- Chart.js Loader ---
 function ensureChartJsLoaded(callback) {
   if (window.Chart) {
@@ -60,47 +72,77 @@ function updateDaySuggestions() {
 // Call once on load
 updateDaySuggestions();
 
-// Load list from localStorage or generate fresh
-let entries = JSON.parse(localStorage.getItem("waterList")) || [];
+// Load list from Firestore or generate fresh
+let entries = [];
 
 // Build a map for quick lookup and merging
 const entryMap = {};
-entries.forEach((entry) => {
-  const key = entry.date.trim().toLowerCase();
-  if (!entryMap[key]) {
-    entryMap[key] = { date: entry.date, drinks: [], weights: [] };
-  }
-  entryMap[key].drinks = entryMap[key].drinks.concat(entry.drinks || []);
-  entryMap[key].weights = entryMap[key].weights.concat(entry.weights || []);
-});
+function buildEntryMapAndFill() {
+  entries.forEach((entry) => {
+    const key = entry.date.trim().toLowerCase();
+    if (!entryMap[key]) {
+      entryMap[key] = { date: entry.date, drinks: [], weights: [] };
+    }
+    entryMap[key].drinks = entryMap[key].drinks.concat(entry.drinks || []);
+    entryMap[key].weights = entryMap[key].weights.concat(entry.weights || []);
+  });
 
-// Always start from 19 June 2025
-let startDate = new Date("2025-06-19");
-const today = new Date();
-today.setHours(0, 0, 0, 0);
+  // Always start from 19 June 2025
+  let startDate = new Date("2025-06-19");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-// Ensure one entry per date from startDate to today
-let tempDate = new Date(startDate);
-while (tempDate <= today) {
-  const dateStr = formatDate(tempDate);
-  const key = dateStr.toLowerCase();
-  if (!entryMap[key]) {
-    entryMap[key] = { date: dateStr, drinks: [] };
+  // Ensure one entry per date from startDate to today
+  let tempDate = new Date(startDate);
+  while (tempDate <= today) {
+    const dateStr = formatDate(tempDate);
+    const key = dateStr.toLowerCase();
+    if (!entryMap[key]) {
+      entryMap[key] = { date: dateStr, drinks: [] };
+    }
+    tempDate.setDate(tempDate.getDate() + 1);
   }
-  tempDate.setDate(tempDate.getDate() + 1);
+  entries = Object.values(entryMap);
+
+  // Remove any entries with a date after today
+  entries = entries.filter((entry) => {
+    // Parse the entry date
+    const entryDate = new Date(entry.date);
+    // Only keep entries up to today
+    return entryDate <= today;
+  });
 }
-entries = Object.values(entryMap);
 
-// Remove any entries with a date after today
-entries = entries.filter((entry) => {
-  // Parse the entry date
-  const entryDate = new Date(entry.date);
-  // Only keep entries up to today
-  return entryDate <= today;
-});
+// --- Load entries from Firestore ---
+async function loadEntries() {
+  try {
+    const doc = await db.collection("users").doc("default").get();
+    if (doc.exists) {
+      entries = doc.data().waterList || [];
+    } else {
+      entries = [];
+    }
+    buildEntryMapAndFill();
+    renderList();
+  } catch (err) {
+    console.error("Error loading from Firestore:", err);
+    entries = [];
+    buildEntryMapAndFill();
+    renderList();
+  }
+}
 
-// Save and render
-localStorage.setItem("waterList", JSON.stringify(entries));
+// --- Save entries to Firestore ---
+async function saveEntries() {
+  try {
+    await db.collection("users").doc("default").set({ waterList: entries });
+  } catch (err) {
+    console.error("Error saving to Firestore:", err);
+  }
+}
+
+// Load entries on page load
+loadEntries();
 
 const olList = document.querySelector("ol");
 function renderList() {
@@ -717,7 +759,7 @@ addBtn.onclick = function () {
   addForm.style.display =
     addForm.style.display === "none" ? "inline-block" : "none";
 };
-addForm.onsubmit = function (e) {
+addForm.onsubmit = async function (e) {
   e.preventDefault();
   const dayNum = document.getElementById("day-input").value.trim();
   const drink = document.getElementById("water-input").value.trim();
@@ -731,7 +773,7 @@ addForm.onsubmit = function (e) {
       entries.push(entry);
       entries.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
-    localStorage.setItem("waterList", JSON.stringify(entries));
+    await saveEntries();
     renderList();
     addForm.style.display = "none";
     document.getElementById("water-input").value = "";
@@ -744,7 +786,7 @@ addWeightBtn.onclick = function () {
   addWeightForm.style.display =
     addWeightForm.style.display === "none" ? "inline-block" : "none";
 };
-addWeightForm.onsubmit = function (e) {
+addWeightForm.onsubmit = async function (e) {
   e.preventDefault();
   const dayNum = document.getElementById("add-weight-day-input").value.trim();
   const weight = document.getElementById("add-weight-input").value.trim();
@@ -759,7 +801,7 @@ addWeightForm.onsubmit = function (e) {
       entries.push(entry);
       entries.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
-    localStorage.setItem("waterList", JSON.stringify(entries));
+    await saveEntries();
     renderList();
     addWeightForm.style.display = "none";
     document.getElementById("add-weight-input").value = "";
@@ -772,7 +814,7 @@ clearBtn.onclick = function () {
   clearForm.style.display =
     clearForm.style.display === "none" ? "inline-block" : "none";
 };
-clearForm.onsubmit = function (e) {
+clearForm.onsubmit = async function (e) {
   e.preventDefault();
   const dayNum = document.getElementById("clear-day-input").value.trim();
   if (dayNum) {
@@ -780,7 +822,7 @@ clearForm.onsubmit = function (e) {
     let entry = entries.find((e) => e.date === dateStr);
     if (entry) {
       entry.drinks = [];
-      localStorage.setItem("waterList", JSON.stringify(entries));
+      await saveEntries();
       renderList();
     }
     clearForm.style.display = "none";
@@ -793,7 +835,7 @@ clearWeightBtn.onclick = function () {
   clearWeightForm.style.display =
     clearWeightForm.style.display === "none" ? "inline-block" : "none";
 };
-clearWeightForm.onsubmit = function (e) {
+clearWeightForm.onsubmit = async function (e) {
   e.preventDefault();
   const dayNum = document.getElementById("clear-weight-day-input").value.trim();
   if (dayNum) {
@@ -801,7 +843,7 @@ clearWeightForm.onsubmit = function (e) {
     let entry = entries.find((e) => e.date === dateStr);
     if (entry && entry.weights) {
       entry.weights = [];
-      localStorage.setItem("waterList", JSON.stringify(entries));
+      await saveEntries();
       renderList();
     }
     clearWeightForm.style.display = "none";
